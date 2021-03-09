@@ -18,8 +18,13 @@ type Manager struct {
 }
 
 func NewWindowManager() *Manager {
+	layout := NewLayout().
+		SetDirection(HorizontalLayout)
+
 	manager := &Manager{
-		Box: tview.NewBox(),
+		Box:         tview.NewBox(),
+		logicalRoot: layout,
+		visibleRoot: layout,
 	}
 
 	return manager
