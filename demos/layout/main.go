@@ -6,8 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axard/tilman/pkg/layout"
-	"github.com/axard/tilman/pkg/window"
+	"github.com/axard/tilman"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -73,41 +72,41 @@ func textview() tview.Primitive {
 }
 
 func main() {
-	window_1 := window.New().
+	window_1 := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile-1").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		})
 
-	window_2 := window.New().
+	window_2 := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile-2").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		})
 
-	window_3 := window.New().
+	window_3 := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile-3").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		})
 
-	layout_1 := layout.New().
-		SetDirection(layout.Horizontal).
+	layout_1 := tilman.NewLayout().
+		SetDirection(tilman.HorizontalLayout).
 		SetSplitter(true).
-		AddItem(window_1, layout.AutoSize).
-		AddItem(window_2, layout.AutoSize)
+		AddItem(window_1, tilman.AutoSize).
+		AddItem(window_2, tilman.AutoSize)
 
-	layout_2 := layout.New().
-		SetDirection(layout.Vertical).
+	layout_2 := tilman.NewLayout().
+		SetDirection(tilman.VerticalLayout).
 		SetSplitter(true).
-		AddItem(layout_1, layout.AutoSize).
-		AddItem(window_3, layout.AutoSize)
+		AddItem(layout_1, tilman.AutoSize).
+		AddItem(window_3, tilman.AutoSize)
 
 	if err := App.SetRoot(layout_2, true).EnableMouse(true).Run(); err != nil {
 		panic(err)

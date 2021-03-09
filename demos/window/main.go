@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axard/tilman/pkg/window"
+	"github.com/axard/tilman"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -73,11 +73,11 @@ func textview() tview.Primitive {
 }
 
 func main() {
-	window := window.New().
+	window := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		})
 

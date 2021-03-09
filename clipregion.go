@@ -1,4 +1,4 @@
-package clipregion
+package tilman
 
 import "github.com/gdamore/tcell/v2"
 
@@ -14,7 +14,7 @@ type ClipRegion struct {
 }
 
 // New creates a new clipped screen with the given rectangular coordinates
-func New(screen tcell.Screen, x, y, width, height int) *ClipRegion {
+func NewClipRegion(screen tcell.Screen, x, y, width, height int) *ClipRegion {
 	return &ClipRegion{
 		Screen: screen,
 		x:      x,

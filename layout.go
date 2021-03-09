@@ -1,9 +1,8 @@
-package layout
+package tilman
 
 import (
 	"fmt"
 
-	"github.com/axard/tilman/pkg/clipregion"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -11,8 +10,8 @@ import (
 type Direction int
 
 const (
-	Vertical Direction = iota
-	Horizontal
+	VerticalLayout Direction = iota
+	HorizontalLayout
 )
 
 const (
@@ -76,7 +75,7 @@ type Layout struct {
 	mouseCapture func(action tview.MouseAction, event *tcell.EventMouse) (tview.MouseAction, *tcell.EventMouse)
 }
 
-func New() *Layout {
+func NewLayout() *Layout {
 	layout := &Layout{
 		backgroundColor:       tview.Styles.PrimitiveBackgroundColor,
 		focusedSplitterNumber: -1,
@@ -162,9 +161,9 @@ func (l *Layout) itemsSize() int {
 
 func (l *Layout) availableSpace() int {
 	switch l.direction {
-	case Horizontal:
+	case HorizontalLayout:
 		return l.width
-	case Vertical:
+	case VerticalLayout:
 		return l.height
 	default:
 		return 0
@@ -204,17 +203,17 @@ func (l *Layout) Draw(screen tcell.Screen) {
 	}
 
 	switch l.direction {
-	case Horizontal:
+	case HorizontalLayout:
 		vertical := tview.Borders.Vertical
 
 		for number, item := range l.items {
 			if item.Size == AutoSize {
 				item.Primitive.SetRect(x, y, autoSize, height)
-				item.Primitive.Draw(clipregion.New(screen, x, y, autoSize, height))
+				item.Primitive.Draw(NewClipRegion(screen, x, y, autoSize, height))
 				x += autoSize
 			} else {
 				item.Primitive.SetRect(x, y, item.Size, height)
-				item.Primitive.Draw(clipregion.New(screen, x, y, item.Size, height))
+				item.Primitive.Draw(NewClipRegion(screen, x, y, item.Size, height))
 				x += item.Size
 			}
 
@@ -234,17 +233,17 @@ func (l *Layout) Draw(screen tcell.Screen) {
 			}
 		}
 
-	case Vertical:
+	case VerticalLayout:
 		horizontal := tview.Borders.Horizontal
 
 		for number, item := range l.items {
 			if item.Size == AutoSize {
 				item.Primitive.SetRect(x, y, width, autoSize)
-				item.Primitive.Draw(clipregion.New(screen, x, y, width, autoSize))
+				item.Primitive.Draw(NewClipRegion(screen, x, y, width, autoSize))
 				y += autoSize
 			} else {
 				item.Primitive.SetRect(x, y, width, item.Size)
-				item.Primitive.Draw(clipregion.New(screen, x, y, width, item.Size))
+				item.Primitive.Draw(NewClipRegion(screen, x, y, width, item.Size))
 				y += item.Size
 			}
 
@@ -374,12 +373,12 @@ func (l *Layout) MouseHandler() func(action tview.MouseAction, event *tcell.Even
 				l.dragY = y
 
 				switch l.direction {
-				case Horizontal:
+				case HorizontalLayout:
 					l.draggedSplitter.a.SetRect(wxa, wya, wwa+dx, wha)
 					l.draggedSplitter.b.SetRect(wxb+dx, wyb, wwb-dx, whb)
 					l.draggedSplitter.a.Size = wwa + dx
 					l.draggedSplitter.b.Size = wwb - dx
-				case Vertical:
+				case VerticalLayout:
 					l.draggedSplitter.a.SetRect(wxa, wya, wwa, wha+dy)
 					l.draggedSplitter.b.SetRect(wxb, wyb+dy, wwb, whb-dy)
 					l.draggedSplitter.a.Size = wha + dy
@@ -538,7 +537,7 @@ func (l *Layout) rebuildSplitters() {
 	}
 
 	switch l.direction {
-	case Horizontal:
+	case HorizontalLayout:
 		for i := 0; i < len(l.items)-1; i++ {
 			if l.items[i].Size == AutoSize {
 				x += autoSize
@@ -559,7 +558,7 @@ func (l *Layout) rebuildSplitters() {
 			}
 		}
 
-	case Vertical:
+	case VerticalLayout:
 		for i := 0; i < len(l.items)-1; i++ {
 			if l.items[i].Size == AutoSize {
 				y += autoSize

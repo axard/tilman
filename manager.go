@@ -1,11 +1,8 @@
-package manager
+package tilman
 
 import (
 	"sync"
 
-	"github.com/axard/tilman/pkg/clipregion"
-	"github.com/axard/tilman/pkg/layout"
-	"github.com/axard/tilman/pkg/window"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -20,7 +17,7 @@ type Manager struct {
 	restoreX, restoreY, restoreWidth, restoreHeight int
 }
 
-func New() *Manager {
+func NewWindowManager() *Manager {
 	manager := &Manager{
 		Box: tview.NewBox(),
 	}
@@ -28,26 +25,26 @@ func New() *Manager {
 	return manager
 }
 
-func (m *Manager) SetRoot(root *layout.Layout) *Manager {
+func (m *Manager) SetRoot(root *Layout) *Manager {
 	m.logicalRoot = root
 	m.visibleRoot = root
 
 	return m
 }
 
-func (m *Manager) GetRoot() *layout.Layout {
-	return m.logicalRoot.(*layout.Layout)
+func (m *Manager) GetRoot() *Layout {
+	return m.logicalRoot.(*Layout)
 }
 
-func (m *Manager) Maximize(w *window.Window) *Manager {
+func (m *Manager) Maximize(w *Window) *Manager {
 	m.visibleRoot = w
 	m.restoreX, m.restoreY, m.restoreWidth, m.restoreHeight = w.GetRect()
 
 	return m
 }
 
-func (m *Manager) IsMaximazed(w *window.Window) bool {
-	vw, ok := m.visibleRoot.(*window.Window)
+func (m *Manager) IsMaximazed(w *Window) bool {
+	vw, ok := m.visibleRoot.(*Window)
 	if !ok {
 		return false
 	}
@@ -84,7 +81,7 @@ func (m *Manager) Draw(screen tcell.Screen) {
 
 	x, y, width, height := m.Box.GetInnerRect()
 	m.visibleRoot.SetRect(x, y, width, height)
-	m.visibleRoot.Draw(clipregion.New(screen, x, y, width, height))
+	m.visibleRoot.Draw(NewClipRegion(screen, x, y, width, height))
 }
 
 // MouseHandler returns the mouse handler for this primitive.

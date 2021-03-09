@@ -6,9 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/axard/tilman/pkg/layout"
-	"github.com/axard/tilman/pkg/manager"
-	"github.com/axard/tilman/pkg/window"
+	"github.com/axard/tilman"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -74,12 +72,12 @@ func textview() tview.Primitive {
 }
 
 func main() {
-	manager := manager.New()
+	manager := tilman.NewWindowManager()
 	manager.
 		SetTitle("Manager").
 		SetBorder(true)
 
-	maxmin := func(w *window.Window, b *window.Button) {
+	maxmin := func(w *tilman.Window, b *tilman.WindowButton) {
 		if manager.IsMaximazed(w) {
 			manager.Restore()
 			b.Symbol = '▴'
@@ -89,44 +87,44 @@ func main() {
 		}
 	}
 
-	window_1 := window.New().
+	window_1 := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile-1").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		}).
-		AddButton('▴', window.ButtonAlignRight, maxmin)
+		AddButton('▴', tilman.WindowButtonAlignRight, maxmin)
 
-	window_2 := window.New().
+	window_2 := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile-2").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		}).
-		AddButton('▴', window.ButtonAlignRight, maxmin)
+		AddButton('▴', tilman.WindowButtonAlignRight, maxmin)
 
-	window_3 := window.New().
+	window_3 := tilman.NewWindow().
 		SetRoot(textview()).
 		SetTitle("Agile-3").
 		SetBorder(true).
-		AddButton('X', window.ButtonAlignRight, func(_ *window.Window, _ *window.Button) {
+		AddButton('X', tilman.WindowButtonAlignRight, func(_ *tilman.Window, _ *tilman.WindowButton) {
 			App.Stop()
 		}).
-		AddButton('▴', window.ButtonAlignRight, maxmin)
+		AddButton('▴', tilman.WindowButtonAlignRight, maxmin)
 
-	layout_1 := layout.New().
-		SetDirection(layout.Horizontal).
+	layout_1 := tilman.NewLayout().
+		SetDirection(tilman.HorizontalLayout).
 		SetSplitter(true).
-		AddItem(window_1, layout.AutoSize).
-		AddItem(window_2, layout.AutoSize)
+		AddItem(window_1, tilman.AutoSize).
+		AddItem(window_2, tilman.AutoSize)
 
-	layout_2 := layout.New().
-		SetDirection(layout.Vertical).
+	layout_2 := tilman.NewLayout().
+		SetDirection(tilman.VerticalLayout).
 		SetSplitter(true).
-		AddItem(layout_1, layout.AutoSize).
-		AddItem(window_3, layout.AutoSize)
+		AddItem(layout_1, tilman.AutoSize).
+		AddItem(window_3, tilman.AutoSize)
 
 	manager.SetRoot(layout_2)
 

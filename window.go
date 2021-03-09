@@ -1,26 +1,25 @@
-package window
+package tilman
 
 import (
 	"fmt"
 
-	"github.com/axard/tilman/pkg/clipregion"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-type ButtonAlignment int
+type WindowButtonAlignment int
 
 const (
-	ButtonAlignLeft  ButtonAlignment = tview.AlignLeft
-	ButtonAlignRight ButtonAlignment = tview.AlignRight
+	WindowButtonAlignLeft  WindowButtonAlignment = tview.AlignLeft
+	WindowButtonAlignRight WindowButtonAlignment = tview.AlignRight
 )
 
-// Button represents a button on the window title bar
-type Button struct {
-	Alignment ButtonAlignment
+// WindowButton represents a button on the window title bar
+type WindowButton struct {
+	Alignment WindowButtonAlignment
 	Symbol    rune // icon for the button
 
-	OnClick func(w *Window, b *Button) // callback to be invoked when the button is clicked
+	OnClick func(w *Window, b *WindowButton) // callback to be invoked when the button is clicked
 
 	offsetX, offsetY int
 }
@@ -31,7 +30,7 @@ type Window struct {
 	// The item contained in the window
 	root tview.Primitive
 	// window buttons on the title bar
-	buttons []*Button
+	buttons []*WindowButton
 	// whether to render a border
 	border bool
 	// The color of the title.
@@ -40,7 +39,7 @@ type Window struct {
 	titleAlign int
 }
 
-func New() *Window {
+func NewWindow() *Window {
 	window := &Window{
 		Box:        tview.NewBox(),
 		titleColor: tview.Styles.TitleColor,
@@ -120,13 +119,13 @@ func (w *Window) Draw(screen tcell.Screen) {
 	if w.root != nil {
 		x, y, width, height := w.GetInnerRect()
 		w.root.SetRect(x, y, width, height)
-		w.root.Draw(clipregion.New(screen, x, y, width, height))
+		w.root.Draw(NewClipRegion(screen, x, y, width, height))
 	}
 
 	// draw the window border
 	if w.border {
 		x, y, width, height := w.GetRect()
-		screen = clipregion.New(screen, x, y, width, height)
+		screen = NewClipRegion(screen, x, y, width, height)
 		for _, button := range w.buttons {
 			buttonX, buttonY := button.offsetX+x, button.offsetY+y
 			if button.offsetX < 0 {
@@ -189,8 +188,8 @@ func (w *Window) drawBox(screen tcell.Screen, x, y, width, height int) (int, int
 }
 
 // AddButton adds a new window button to the title bar
-func (w *Window) AddButton(symbol rune, alignment ButtonAlignment, onclick func(w *Window, b *Button)) *Window {
-	w.buttons = append(w.buttons, &Button{
+func (w *Window) AddButton(symbol rune, alignment WindowButtonAlignment, onclick func(w *Window, b *WindowButton)) *Window {
+	w.buttons = append(w.buttons, &WindowButton{
 		Symbol:    symbol,
 		Alignment: alignment,
 		OnClick:   onclick,
@@ -198,7 +197,7 @@ func (w *Window) AddButton(symbol rune, alignment ButtonAlignment, onclick func(
 
 	offsetLeft, offsetRight := 2, -3
 	for _, button := range w.buttons {
-		if button.Alignment == ButtonAlignRight {
+		if button.Alignment == WindowButtonAlignRight {
 			button.offsetX = offsetRight
 			offsetRight -= 3
 		} else {
@@ -221,7 +220,7 @@ func (w *Window) RemoveButton(i int) *Window {
 }
 
 // GetButton returns the given button
-func (w *Window) GetButton(i int) *Button {
+func (w *Window) GetButton(i int) *WindowButton {
 	if i < 0 || i >= len(w.buttons) {
 		return nil
 	}
